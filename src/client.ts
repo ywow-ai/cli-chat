@@ -1,4 +1,4 @@
-import { treaty } from "@elysiajs/eden";
+import { Treaty, treaty } from "@elysiajs/eden";
 import { App } from ".";
 import env from "./env";
 import { createInterface } from "readline";
@@ -36,13 +36,18 @@ const requestForName = () => {
   });
 };
 requestForName();
-rl.on("line", (line) => {
-  // exec here
-  chat.send(line);
+
+chat.subscribe((message) => {
+  const { data } = message as Treaty.OnMessage<{
+    name: string;
+    text: string;
+  }>;
+  process.stdout.write(`${data.text}\n`);
   prefix();
 });
-chat.subscribe((message) => {
-  process.stdout.write(`${message}\n`);
+rl.on("line", (line) => {
+  chat.send(line);
+  prefix();
 });
 rl.on("close", () => {
   process.stdout.write("Bye!\n");
